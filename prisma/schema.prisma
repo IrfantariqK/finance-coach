@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(cuid()) @map("_id")
   name          String?
   email         String?   @unique
   password      String?
@@ -17,6 +17,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   transactions  Transaction[]
+  plaidConnections PlaidConnection[]
 }
 
 model Account {
@@ -64,4 +65,16 @@ model Transaction {
   type        String
   category    String?
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PlaidConnection {
+  id          String   @id @default(cuid()) @map("_id")
+  userId      String
+  accessToken String
+  itemId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 } 
